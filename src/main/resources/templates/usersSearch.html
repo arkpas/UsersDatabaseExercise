@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users database</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+<div align="center">
+    <b>Liczba znalezionych użytkowników: </b><i th:text="${searchedUsersCount}"></i>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Wiek</th>
+                <th>Telefon</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.surname}"></td>
+            <td th:text="${user.age}"></td>
+            <td th:text="${user.phoneNumber == 0} ? 'brak' : ${user.phoneNumber}"></td>
+            <td><a th:href="@{'/users/search/' + ${searchBy} + '/' + ${textToSearch} + '/' + ${pageNr} + '/remove/' + ${user.id}}">Usuń</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <span th:if="${pageNr>0}">
+        <a th:href="@{'/users/search/' + ${searchBy} + '/' + ${textToSearch} + '/0'}">Pierwsza</a>
+    </span>
+    <span th:if="${pageNr>0}">
+        <a th:href="@{'/users/search/' + ${searchBy} + '/' + ${textToSearch} + '/' + ${pageNr-1}}">Poprzednia</a>
+    </span>
+    <span th:if="${pageNr < lastPage}">
+        <a th:href="@{'/users/search/' + ${searchBy} + '/' + ${textToSearch} + '/' + ${pageNr+1}}">Następna</a>
+    </span>
+    <span th:if="${pageNr < lastPage}">
+        <a th:href="@{'/users/search/' + ${searchBy} + '/' + ${textToSearch} + '/' + ${lastPage}}">Ostatnia</a>
+    </span>
+    <br/>
+    <a th:href="@{/users}">Powrót</a>
+</div>
+</body>
+</html>

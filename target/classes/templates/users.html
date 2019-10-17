@@ -1,0 +1,84 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users database</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+    <div align="center">
+        <div th:if="${message != null}">
+            <b th:text="${message}"></b>
+        </div>
+        <b>Liczba użytkowników: </b><i th:text="${userCount}"></i>
+
+        <form th:method="post" th:action="@{/users/setSort}">
+            <select name="sortBy">
+                <option th:value="id" th:text="ID"></option>
+                <option th:value="name" th:text="IMIE"></option>
+                <option th:value="surname" th:text="NAZWISKO"></option>
+                <option th:value="birthDate" th:text="WIEK"></option>
+                <option th:value="phoneNumber" th:text="TELEFON"></option>
+            </select>
+            <input type="hidden" name="pageNr" th:value="${pageNr}"/>
+            <button type="submit">Ustaw sortowanie</button>
+        </form>
+        <form th:method="post" th:action="@{/users/setNumberOfResults}">
+            <input type="hidden" name="pageNr" th:value="${pageNr}"/>
+            Liczba wyników na stronie: <input name="numberOfResults" type="number" min="1" max="100"/> <button type="submit">Zatwierdź</button>
+
+        </form>
+        <form th:method="post" th:action="@{/users/search}">
+            <select th:name="searchBy">
+                <option selected th:value="surname" th:text="NAZWISKO"></option>
+            </select>
+            <input type="text" th:name="textToSearch"/>
+            <button type="submit">Szukaj</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Wiek</th>
+                    <th>Telefon</th>
+                    <td><a th:href="@{/users/removeAll}">Usuń wszystkich</a></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.surname}"></td>
+                    <td th:text="${user.age}"></td>
+                    <td th:text="${user.phoneNumber == 0} ? 'brak' : ${user.phoneNumber}"></td>
+                    <td><a th:href="@{'/users/' + ${pageNr} + '/remove/' + ${user.id}}">Usuń</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <span th:if="${pageNr>0}">
+            <a th:href="@{/users/}">Pierwsza</a>
+        </span>
+        <span th:if="${pageNr>0}">
+            <a th:href="@{'/users/' + ${pageNr-1}}">Poprzednia</a>
+        </span>
+        <span th:if="${pageNr < lastPage}">
+            <a th:href="@{'/users/' + ${pageNr+1}}">Następna</a>
+        </span>
+        <span th:if="${pageNr < lastPage}">
+            <a th:href="@{'/users/' + ${lastPage}}">Ostatnia</a>
+        </span>
+        <form method="POST" enctype="multipart/form-data" action="/users/fileUpload">
+            <table>
+                <tr><td>Upload pliku:</td><td><input type="file" name="file" accept=".csv" /></td></tr>
+                <tr><td><button type="submit">Prześlij</button></td></tr>
+            </table>
+        </form>
+        <b>Najstarszy użytkownik z telefonem:</b>
+        <input readonly disabled th:value="${oldestUserWithPhoneNumber}" size="45"/>
+    </div>
+</body>
+</html>
